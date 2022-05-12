@@ -1,0 +1,220 @@
+kaboom()
+
+loadBean()
+loadSprite("alien","alien.png")
+loadSprite("player","pongship.gif")
+
+let score = 0
+
+
+
+scene("menu", () => {
+ 
+  add([
+    text("START"),
+    "startButton",
+    pos(200,200),
+    color(0,255,50),
+    area()
+  ])
+ 
+  onClick("startButton",() => {
+    go("game")
+  })
+ 
+})
+
+
+scene("game",() => {
+ 
+  let hp = 3
+ 
+  const player = add([
+  sprite("player",{
+    width: 60,
+    height: 60,
+         }),
+  pos(width()/2,height()-90), //position
+  area({
+    scale: 0.4
+  }),
+    origin("top"),
+    
+  ])
+ 
+spawnAliens()
+ 
+   let scoreLabel = add([
+  text("Score: 0"),
+  pos(0,570)
+ 
+])
+ 
+ 
+  onCollide("laser","alien", (l,a) => {
+    destroy(a)
+    destroy(l)
+    score += 5
+  scoreLabel.text = "Score: "+score
+    if (score == 250 )
+      go("restart")
+  })  
+ 
+  player.onCollide("bomb",() => {
+    destroy("bomb")
+add([
+      "laser",
+      rect(15,15),
+      color(0,0,0),
+      area(),
+      pos(player.pos),
+      move(UP,400),
+      cleanup()
+    ])
+  })
+  player.onCollide("alien", () => {
+    destroy ("player"),
+      go("lose")
+  })
+  
+ 
+  let alienVel = 20
+  onUpdate("alien",(a) => {
+    a.move(alienVel,0)
+    if(a.pos.x > width()) {
+      alienVel *= -1
+      every("alien",(a2) => {
+        a2.move(alienVel,200)
+      })
+     
+    }
+    else if(a.pos.x < 0) {
+      alienVel *= -1
+      every("alien",(a2) => {
+        a2.move(alienVel,200)
+      })
+    }
+   
+    if (a.pos.y > height()) {
+      go("lose")
+    }
+   
+    if (Math.random() < 0.0009){
+    const bPos = a.pos.add(0,a.height/2)
+    add([
+      "bomb",
+      pos(bPos),
+      rect(15,15),
+      origin("center"),
+      area(),
+      color(0,0,0),
+      move(DOWN,400),
+      cleanup()
+     
+    ])
+    }
+  })
+ 
+ 
+  onKeyDown("d", () => {
+  player.move(350,0)
+})
+
+onKeyDown("a", () => {
+  player.move(-350,0)
+})
+ 
+
+     
+})
+
+scene("lose", () => {
+ 
+   
+      add([
+    text("YOU LOSE!"),
+    pos(200,200),
+    color(0,255,50),
+    area(),
+        score = 0,
+        ])
+     
+     add([
+    text("RETRY"),
+     "restartButton",
+    pos(250,300),
+    color(255,0,0),
+    area(),
+        score = 0,
+        ])
+       
+     
+
+   
+   
+       onClick("restartButton",() => {
+    go("game")
+  })
+       
+      })
+ 
+ 
+scene("restart", () => {
+ 
+   if (score == 250) {
+      add([
+    text("YOU WIN!"),
+    pos(200,200),
+    color(0,255,50),
+    area(),
+        score = 0,
+        ])
+     
+     add([
+    text("RETRY"),
+     "restartButton",
+    pos(250,300),
+    color(255,0,0),
+    area(),
+        score = 0,
+        ])
+       
+    }
+
+   
+   
+       onClick("restartButton",() => {
+    go("game")
+  })
+       
+      })
+
+function spawnAliens() {
+ 
+  let x = 100
+  let y = 0
+for(let i = 0; i < 50; i++) {
+ 
+add([
+  "alien",
+  sprite("alien",{
+    width: 50,
+    height: 50,
+         }),
+  pos(x,y),
+  origin("center"),
+  area(),
+  solid(),
+  color(0,255,50),
+])
+  x += 60
+  if(x + 125 > width()){
+    y += 60
+    x = 100
+  }
+   
+}
+ 
+}
+
+go("menu")
