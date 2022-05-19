@@ -1,4 +1,7 @@
-kaboom()
+
+kaboom({
+  background: [255, 204, 100]
+})
 
 loadBean()
 loadSprite("alien","alien.png")
@@ -9,14 +12,32 @@ let score = 0
 
 
 scene("menu", () => {
- 
+add([
+  pos(200,50),
+  text("Space Pong", {
+    font: "sink",
+    size: 48,
+    width: 320,
+  })
+])
   add([
-    text("START"),
+    text("START", {
+      font: "sink",
+      size: 50,
+    }),
     "startButton",
     pos(200,200),
     color(0,255,50),
     area()
-  ])
+  ]) 
+add([
+  pos(100,300),
+  text("Tip: Watch out for the red bombs", {
+    size: 38, 
+    width: 500,
+    font: "sink",
+  })
+])
  
   onClick("startButton",() => {
     go("game")
@@ -26,15 +47,14 @@ scene("menu", () => {
 
 
 scene("game",() => {
- 
   let hp = 3
  
   const player = add([
   sprite("player",{
-    width: 60,
-    height: 60,
+    width: 100,
+    height: 100,
          }),
-  pos(width()/2,height()-90), //position
+  pos(width()/2,height()-110), //position
   area({
     scale: 0.4
   }),
@@ -45,8 +65,12 @@ scene("game",() => {
 spawnAliens()
  
    let scoreLabel = add([
-  text("Score: 0"),
-  pos(0,570)
+  text("Score: 0", {
+    font:"sink",
+    size: 48,
+    width: 360,
+  }),
+  pos(0,565)
  
 ])
  
@@ -59,9 +83,19 @@ spawnAliens()
     if (score == 250 )
       go("restart")
   })  
+  const hpLabel = add([
+  text("hp: "+hp, {
+    font:"sink",
+    size: 48,
+    width: 360,
+  }),
+  pos(460,565),
+  color(255,0,0),
+  z(1)
+])
  
-  player.onCollide("bomb",() => {
-    destroy("bomb")
+  player.onCollide("bomb",(b) => {
+    destroy(b)
 add([
       "laser",
       rect(15,15),
@@ -71,6 +105,16 @@ add([
       move(UP,400),
       cleanup()
     ])
+  })
+  player.onCollide("redBomb", (r) =>{
+    destroy(r)
+        hp--
+    hpLabel.text = "hp :"+hp
+    if(hp == 0) {
+      wait(3)
+      go("lose")
+    }
+    shake()
   })
   player.onCollide("alien", () => {
     destroy ("player"),
@@ -113,6 +157,20 @@ add([
      
     ])
     }
+     if (Math.random() < 0.0009){
+    const rbPos = a.pos.add(0,a.height/2)
+    add([
+      "redBomb",
+      pos(rbPos),
+      rect(15,15),
+      origin("center"),
+      area(),
+      color(255, 0, 0),
+      move(DOWN,400),
+      cleanup()
+     
+    ])
+    }
   })
  
  
@@ -132,15 +190,23 @@ scene("lose", () => {
  
    
       add([
-    text("YOU LOSE!"),
+    text("YOU LOSE!", {
+    font:"sink",
+    size: 48,
+    width: 360,
+  }),
     pos(200,200),
-    color(0,255,50),
+    color(255, 0 ,0),
     area(),
         score = 0,
         ])
      
      add([
-    text("RETRY"),
+    text("RETRY", {
+    font:"sink",
+    size: 48,
+    width: 360,
+  }),
      "restartButton",
     pos(250,300),
     color(255,0,0),
@@ -163,7 +229,11 @@ scene("restart", () => {
  
    if (score == 250) {
       add([
-    text("YOU WIN!"),
+    text("YOU WIN!", {
+    font:"sink",
+    size: 48,
+    width: 360,
+  }),
     pos(200,200),
     color(0,255,50),
     area(),
@@ -193,7 +263,7 @@ function spawnAliens() {
  
   let x = 100
   let y = 0
-for(let i = 0; i < 50; i++) {
+for(let i = 0; i < 27; i++) {
  
 add([
   "alien",
@@ -218,3 +288,5 @@ add([
 }
 
 go("menu")
+
+
