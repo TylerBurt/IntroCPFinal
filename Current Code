@@ -11,6 +11,8 @@ let score = 0
 
 
 
+
+
 scene("menu", () => {
 add([
   pos(200,50),
@@ -47,6 +49,9 @@ add([
 
 
 scene("game",() => {
+  
+  
+  
   let hp = 3
  
   const player = add([
@@ -63,6 +68,7 @@ scene("game",() => {
   ])
  
 spawnAliens()
+  
  
    let scoreLabel = add([
   text("Score: 0", {
@@ -78,11 +84,13 @@ spawnAliens()
   onCollide("laser","alien", (l,a) => {
     destroy(a)
     destroy(l)
-    score += 5
+    score += 10
   scoreLabel.text = "Score: "+score
-    if (score == 250 )
+    if (score == 270)
       go("restart")
   })  
+  
+ 
   const hpLabel = add([
   text("hp: "+hp, {
     font:"sink",
@@ -181,6 +189,11 @@ add([
 onKeyDown("a", () => {
   player.move(-350,0)
 })
+  
+  
+    
+  
+  
  
 
      
@@ -196,7 +209,7 @@ scene("lose", () => {
     width: 360,
   }),
     pos(200,200),
-    color(255, 0 ,0),
+    color(0, 0 ,0),
     area(),
         score = 0,
         ])
@@ -209,7 +222,7 @@ scene("lose", () => {
   }),
      "restartButton",
     pos(250,300),
-    color(255,0,0),
+    color(0,0,0),
     area(),
         score = 0,
         ])
@@ -227,7 +240,6 @@ scene("lose", () => {
  
 scene("restart", () => {
  
-   if (score == 250) {
       add([
     text("YOU WIN!", {
     font:"sink",
@@ -235,26 +247,30 @@ scene("restart", () => {
     width: 360,
   }),
     pos(200,200),
-    color(0,255,50),
+    color(0,0,0),
     area(),
         score = 0,
         ])
      
      add([
-    text("RETRY"),
+    text("Play Again?", {
+      font:"sink",
+      size: 48,
+      width:460,
+    }),
      "restartButton",
-    pos(250,300),
-    color(255,0,0),
+    pos(200,300),
+    color(0,0,0),
     area(),
         score = 0,
         ])
-       
-    }
+      
+    
 
    
    
        onClick("restartButton",() => {
-    go("game")
+    go("menu")
   })
        
       })
@@ -288,5 +304,4 @@ add([
 }
 
 go("menu")
-
 
